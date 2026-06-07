@@ -184,7 +184,37 @@ class MTMultifita:
             print(f"  {'Passo':<6} {'Estado':<12} {'F1[pos]':<10} {'F2[pos]':<10} {'Ação'}")
             print(f"  {'-'*56}")
 
+
         while estado not in self.ESTADOS_FINAIS:
+            # Correção: quando chegamos em q1, reposicionamos explicitamente
+            # as cabeças para iniciar a comparação: Fita1 -> início (pos 0)
+            # e Fita2 -> menor índice escrito (início da cópia invertida).
+            # Isso evita dependência frágil nas combinações de movimentos
+            # definidas na tabela de transições que podem deixar as cabeças
+            # em posições além do conteúdo.
+            if estado == 'q1':
+                # posicionar Fita1 no início do conteúdo (índice 0)
+                fita1.ir_para(0)
+                # posicionar Fita2 no início da cópia invertida.
+                # Evitar posições onde foi escrito branco por transições auxiliares:
+                if hasattr(fita2, '_cells') and fita2._cells:
+                    keys = sorted(fita2._cells.keys())
+                    lo = None
+                    for k in keys:
+                        if fita2._cells.get(k) != BRANCO:
+                            lo = k
+                            break
+                    if lo is None:
+                        lo = keys[0]
+                    fita2.ir_para(lo)
+                else:
+                    fita2.ir_para(0)
+                if verbose:
+                    print(f"  {passo:<6} {estado:<12} posicionando cabeças -> F1:{fita1.posicao()} F2:{fita2.posicao()}")
+                estado = 'q3'
+                # não incrementamos o passo aqui; prossiga para a próxima iteração
+                continue
+
             l1 = fita1.ler()
             l2 = fita2.ler()
 
