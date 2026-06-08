@@ -9,8 +9,9 @@
 
 ## Ferramenta utilizada
 
-- **Ferramenta:** Claude (Anthropic) — modelo Claude Sonnet
-- **Data aproximada de uso:** Maio/Junho de 2026
+- **Ferramenta:** GitHub Copilot
+- **Modelo:** GPT-5.4 mini
+- **Data aproximada de uso:** Junho de 2026
 
 ---
 
@@ -19,9 +20,10 @@
 O uso da IA foi restrito às seguintes finalidades:
 
 1. **Apoio na revisão textual** do README, da declaração de uso de IA e dos rastreamentos
-2. **Geração de estrutura inicial** para organização do repositório GitHub
-3. **Sugestão de exemplos de teste** (entradas aceitas e rejeitadas), posteriormente verificados manualmente pela equipe
-4. **Esclarecimento de dúvidas conceituais** sobre o formato de transições no JFLAP
+2. **Refatoração estrutural** dos simuladores em Python para ampliar o número de estados efetivos
+3. **Atualização sincronizada** de arquivos JFLAP `.jff` e documentos Markdown
+4. **Sugestão de exemplos de teste** e conferência de rastreamentos, posteriormente verificados manualmente pela equipe
+5. **Esclarecimento de dúvidas conceituais** sobre o formato de transições no JFLAP
 
 ---
 
@@ -29,19 +31,19 @@ O uso da IA foi restrito às seguintes finalidades:
 
 | Prompt utilizado | Trecho aproveitado | Destino |
 |------------------|--------------------|---------|
-| "Como estruturar um repositório GitHub para trabalho acadêmico?" | Estrutura de pastas sugerida | README.md (adaptada) |
-| "Quais exemplos de teste usar para palíndromo em MT?" | Lista de entradas de teste | rastreamento_mt.md (verificada) |
-| "Quais exemplos de teste usar para aⁿbⁿ em PDA?" | Lista de entradas de teste | rastreamento_pda.md (verificada) |
+| "Refatore o PDA para usar mais de 8 estados efetivos" | Sugestão de desenrolamento de estados | implementacoes/pda/simulador_pda.py |
+| "Refatore a MT multifita para usar mais de 8 estados efetivos" | Sugestão de fases adicionais e comparação repartida | implementacoes/mt-multifita/simulador_mt.py |
+| "Atualize os arquivos JFLAP e os rastreamentos" | Estrutura geral das tabelas e rastreamentos | implementacoes/*.jff e testes/*.md |
 | "Revise o texto deste README para clareza acadêmica" | Pequenas correções de redação | README.md |
 
 ---
 
 ## O que foi modificado, corrigido ou rejeitado pela equipe
 
-- A **estrutura das máquinas no JFLAP** (estados, transições, critérios de aceitação) foi **integralmente construída pela equipe**, sem geração por IA
-- Os **simuladores Python** foram escritos pela equipe e apenas revisados quanto à sintaxe
-- Sugestões de exemplos de teste foram verificadas manualmente em execuções reais no JFLAP antes de serem incluídas nos rastreamentos
-- Explicações conceituais geradas pela IA foram contrastadas com o livro-texto (Diverio & Menezes, 2011) e com os slides da disciplina
+- A **estrutura final das máquinas** (estados, transições, critérios de aceitação) foi revisada e ajustada pela equipe antes da entrega
+- Os **simuladores Python** foram validados com execução real e testes representativos antes de serem mantidos na versão final
+- Sugestões de exemplos de teste foram verificadas manualmente em execuções reais no Python/JFLAP antes de serem incluídas nos rastreamentos
+- Explicações conceituais e referências foram contrastadas com o livro-texto (Diverio & Menezes, 2011) e com os slides da disciplina
 
 ---
 
