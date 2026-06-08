@@ -3,7 +3,7 @@
 **Disciplina:** Teoria da Computabilidade — AV2  
 **Turma:** CC5MA / CC5NA  
 **Semestre:** 01/2026  
-**Integrantes:** Pedro Lyra, Vithor dos santos, Murilo Pantoja, João Felipe Soares
+**Integrantes:** Pedro Lyra, Vithor dos Santos, Murilo Pantoja, João Felipe Soares
 
 ---
 

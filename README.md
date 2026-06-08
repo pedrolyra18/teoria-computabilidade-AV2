@@ -5,85 +5,55 @@
 **Turma:** CC5MA / CC5NA  
 **Integrantes:** Pedro Lyra, Vithor dos Santos, Murilo Pantoja, João Felipe Soares
 
----
+## Resumo
 
-## Modelos escolhidos
+Este repositório entrega duas implementações exigidas pela lauda da AV2, com problemas diferentes e rastreamento de execução próprio:
 
-| # | Modelo | Opção | Problema resolvido |
-|---|--------|-------|--------------------|
-| 1 | Máquina de Turing com Múltiplas Fitas | Opção 3 | Reconhecedor de palíndromo sobre {a, b} |
-| 2 | Autômato de Pilha (PDA) | Opção 9 | Reconhecedor da linguagem L = {aⁿbⁿ \| n ≥ 1} |
+| Modelo | Opção | Problema |
+|---|---|---|
+| Máquina de Turing com Múltiplas Fitas | Opção 3 | Reconhecimento de palíndromos sobre `{a, b}` |
+| Autômato de Pilha (PDA) | Opção 9 | Reconhecimento de `L = {a^n b^n | n >= 1}` |
 
----
+## Estrutura
 
-## Estrutura do repositório
+- [slides/Apresentação AV2 Teoria da Computabilidade.pdf](slides/Apresentação%20AV2%20Teoria%20da%20Computabilidade.pdf)
+- [implementacoes/mt-multifita/simulador_mt.py](implementacoes/mt-multifita/simulador_mt.py)
+- [implementacoes/mt-multifita/palindromo.jff](implementacoes/mt-multifita/palindromo.jff)
+- [implementacoes/pda/simulador_pda.py](implementacoes/pda/simulador_pda.py)
+- [implementacoes/pda/anbn.jff](implementacoes/pda/anbn.jff)
+- [testes/rastreamento_mt.md](testes/rastreamento_mt.md)
+- [testes/rastreamento_pda.md](testes/rastreamento_pda.md)
+- [uso_ia.md](uso_ia.md)
 
-```
-av2-computabilidade/
-├── README.md
-├── uso_ia.md
-├── slides/
-│   └── apresentacao.pdf          ← slides da apresentação
-├── implementacoes/
-│   ├── mt-multifita/
-│   │   ├── palindromo.jff         ← arquivo JFLAP (MT 2 fitas)
-│   │   └── simulador_mt.py        ← simulador em Python
-│   └── pda/
-│       ├── anbn.jff               ← arquivo JFLAP (PDA)
-│       └── simulador_pda.py       ← simulador em Python
-└── testes/
-    ├── rastreamento_mt.md         ← rastreamento MT multifita
-    └── rastreamento_pda.md        ← rastreamento PDA
-```
+## Execução
 
----
+Requisitos:
 
-## Como executar
-
-### Requisitos
 - Python 3.8+
-- Nenhuma dependência externa (biblioteca padrão apenas)
-- JFLAP 7.1+ para os arquivos `.jff` → download: https://www.jflap.org
+- JFLAP 7.1+ para abrir os `.jff`
 
-### Simulador MT com Múltiplas Fitas
+Comandos:
 
 ```bash
 python implementacoes/mt-multifita/simulador_mt.py
-```
-
-Exemplos de entrada interativa:
-```
-Digite uma cadeia: aba      → ACEITA
-Digite uma cadeia: abba     → ACEITA
-Digite uma cadeia: ab       → REJEITA
-```
-
-### Simulador PDA (Autômato de Pilha)
-
-```bash
 python implementacoes/pda/simulador_pda.py
 ```
 
-Exemplos de entrada interativa:
-```
-Digite uma cadeia: aabb     → ACEITA
-Digite uma cadeia: aaabbb   → ACEITA
-Digite uma cadeia: aab      → REJEITA
-```
+No JFLAP, abrir `palindromo.jff` ou `anbn.jff` e usar `Input → Step by State` para acompanhar o rastreamento.
 
-### Arquivos JFLAP
+## Entregáveis
 
-1. Abra o JFLAP
-2. `File → Open` → selecione `palindromo.jff` ou `anbn.jff`
-3. `Input → Enter Input` → digite a cadeia de teste
-4. Para rastreamento passo a passo: `Input → Step by State`
+O repositório contém os itens pedidos na lauda:
 
----
+- README com identificação, modelos, execução e referências
+- Implementações em Python e JFLAP
+- Rastreios de execução em Markdown
+- Slides da apresentação
+- Declaração de uso de IA
 
 ## Referências
 
 - DIVERIO, Tiarajú A.; MENEZES, Paulo B. **Teoria da Computação: Máquinas Universais e Computabilidade.** 3. ed. Porto Alegre: Bookman, 2011.
 - MENEZES, Paulo B. **Linguagens Formais e Autômatos.** 6. ed. Porto Alegre: Bookman, 2011.
-- Sipser, Michael. **Introduction to the Theory of Computation.** 3. ed. Cengage, 2012.
+- SIPSER, Michael. **Introduction to the Theory of Computation.** 3. ed. Cengage, 2012.
 - Documentação oficial do JFLAP: https://www.jflap.org/jflaptmp/
-- Slides da disciplina (Prof. Daniel Leal Souza, CESUPA, 01/2026)
