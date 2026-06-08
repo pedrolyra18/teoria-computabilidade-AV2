@@ -2,7 +2,7 @@
 **Disciplina:** Teoria da Computabilidade  
 **Professor:** Daniel Leal Souza  
 **Semestre:** 01/2026  
-**Turma:** CC5MA / CC5NA  
+**Turma:** CC5MA  
 **Integrantes:** Pedro Lyra, Vithor dos Santos, Murilo Pantoja, João Felipe Soares
 
 ## Resumo
