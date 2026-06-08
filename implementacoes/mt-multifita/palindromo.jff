@@ -30,15 +30,13 @@
     <state id="10" name="q_rejeita" x="560" y="480"/>
 
     <!-- =====================================================
-         FASE 1: Cópia reversa (estados q0, auto-laço)
-         Fita1 lê símbolo e move R; Fita2 escreve e move L
-         Formato de transição: leitura1;escrita1;dir1;leitura2;escrita2;dir2
+         FASE 1: Cópia reversa
+         q0 trata o primeiro símbolo; q1 mantém a cópia.
          ===================================================== -->
 
-    <!-- q0 self-loop: lê 'a' na F1, copia 'a' na F2 -->
     <transition>
       <from>0</from>
-      <to>0</to>
+      <to>1</to>
       <read tape="1">a</read>
       <write tape="1">a</write>
       <move tape="1">R</move>
@@ -46,11 +44,9 @@
       <write tape="2">a</write>
       <move tape="2">L</move>
     </transition>
-
-    <!-- q0 self-loop: lê 'b' na F1, copia 'b' na F2 -->
     <transition>
       <from>0</from>
-      <to>0</to>
+      <to>1</to>
       <read tape="1">b</read>
       <write tape="1">b</write>
       <move tape="1">R</move>
@@ -58,11 +54,40 @@
       <write tape="2">b</write>
       <move tape="2">L</move>
     </transition>
-
-    <!-- q0 → q1: leu branco na F1 (fim da entrada) -->
     <transition>
       <from>0</from>
+      <to>7</to>
+      <read tape="1"> </read>
+      <write tape="1"> </write>
+      <move tape="1">S</move>
+      <read tape="2"> </read>
+      <write tape="2"> </write>
+      <move tape="2">S</move>
+    </transition>
+
+    <transition>
+      <from>1</from>
       <to>1</to>
+      <read tape="1">a</read>
+      <write tape="1">a</write>
+      <move tape="1">R</move>
+      <read tape="2"> </read>
+      <write tape="2">a</write>
+      <move tape="2">L</move>
+    </transition>
+    <transition>
+      <from>1</from>
+      <to>1</to>
+      <read tape="1">b</read>
+      <write tape="1">b</write>
+      <move tape="1">R</move>
+      <read tape="2"> </read>
+      <write tape="2">b</write>
+      <move tape="2">L</move>
+    </transition>
+    <transition>
+      <from>1</from>
+      <to>2</to>
       <read tape="1"> </read>
       <write tape="1"> </write>
       <move tape="1">S</move>
@@ -72,14 +97,84 @@
     </transition>
 
     <!-- =====================================================
-         FASE 2a: Avança F2 até o início do conteúdo copiado
-         q1: move F2 para a direita enquanto vê o conteúdo
+         FASE 2: Reposicionamento
+         q2 avança F2; q3 recua F1 até o início.
          ===================================================== -->
 
-    <!-- q1: encontrou símbolo em F2 → vai para q3 (início da comparação) -->
     <transition>
-      <from>1</from>
+      <from>2</from>
+      <to>2</to>
+      <read tape="1"> </read>
+      <write tape="1"> </write>
+      <move tape="1">S</move>
+      <read tape="2"> </read>
+      <write tape="2"> </write>
+      <move tape="2">R</move>
+    </transition>
+    <transition>
+      <from>2</from>
       <to>3</to>
+      <read tape="1"> </read>
+      <write tape="1"> </write>
+      <move tape="1">L</move>
+      <read tape="2">a</read>
+      <write tape="2">a</write>
+      <move tape="2">S</move>
+    </transition>
+    <transition>
+      <from>2</from>
+      <to>3</to>
+      <read tape="1"> </read>
+      <write tape="1"> </write>
+      <move tape="1">L</move>
+      <read tape="2">b</read>
+      <write tape="2">b</write>
+      <move tape="2">S</move>
+    </transition>
+
+    <transition>
+      <from>3</from>
+      <to>3</to>
+      <read tape="1">a</read>
+      <write tape="1">a</write>
+      <move tape="1">L</move>
+      <read tape="2">a</read>
+      <write tape="2">a</write>
+      <move tape="2">S</move>
+    </transition>
+    <transition>
+      <from>3</from>
+      <to>3</to>
+      <read tape="1">a</read>
+      <write tape="1">a</write>
+      <move tape="1">L</move>
+      <read tape="2">b</read>
+      <write tape="2">b</write>
+      <move tape="2">S</move>
+    </transition>
+    <transition>
+      <from>3</from>
+      <to>3</to>
+      <read tape="1">b</read>
+      <write tape="1">b</write>
+      <move tape="1">L</move>
+      <read tape="2">a</read>
+      <write tape="2">a</write>
+      <move tape="2">S</move>
+    </transition>
+    <transition>
+      <from>3</from>
+      <to>3</to>
+      <read tape="1">b</read>
+      <write tape="1">b</write>
+      <move tape="1">L</move>
+      <read tape="2">b</read>
+      <write tape="2">b</write>
+      <move tape="2">S</move>
+    </transition>
+    <transition>
+      <from>3</from>
+      <to>4</to>
       <read tape="1"> </read>
       <write tape="1"> </write>
       <move tape="1">R</move>
@@ -87,78 +182,25 @@
       <write tape="2">a</write>
       <move tape="2">S</move>
     </transition>
-
     <transition>
-      <from>1</from>
-      <to>3</to>
+      <from>3</from>
+      <to>4</to>
       <read tape="1"> </read>
       <write tape="1"> </write>
       <move tape="1">R</move>
       <read tape="2">b</read>
       <write tape="2">b</write>
-      <move tape="2">S</move>
-    </transition>
-
-    <!-- q1 → q2: F2 ainda em branco, precisa retroceder F1 -->
-    <transition>
-      <from>1</from>
-      <to>2</to>
-      <read tape="1"> </read>
-      <write tape="1"> </write>
-      <move tape="1">L</move>
-      <read tape="2"> </read>
-      <write tape="2"> </write>
-      <move tape="2">S</move>
-    </transition>
-
-    <!-- =====================================================
-         FASE 2b: Retorno de F1 ao início
-         q2: F1 recua para a esquerda
-         ===================================================== -->
-
-    <transition>
-      <from>2</from>
-      <to>2</to>
-      <read tape="1">a</read>
-      <write tape="1">a</write>
-      <move tape="1">L</move>
-      <read tape="2"> </read>
-      <write tape="2"> </write>
-      <move tape="2">S</move>
-    </transition>
-
-    <transition>
-      <from>2</from>
-      <to>2</to>
-      <read tape="1">b</read>
-      <write tape="1">b</write>
-      <move tape="1">L</move>
-      <read tape="2"> </read>
-      <write tape="2"> </write>
-      <move tape="2">S</move>
-    </transition>
-
-    <!-- q2 → q3: F1 chegou ao início (leu branco) -->
-    <transition>
-      <from>2</from>
-      <to>3</to>
-      <read tape="1"> </read>
-      <write tape="1"> </write>
-      <move tape="1">R</move>
-      <read tape="2"> </read>
-      <write tape="2"> </write>
       <move tape="2">S</move>
     </transition>
 
     <!-- =====================================================
          FASE 3: Comparação
-         q3/q4: lê F1 e F2 simultaneamente
+         q4 inicia; q5/q6 alternam conforme os símbolos lidos.
          ===================================================== -->
 
-    <!-- Símbolos iguais: a = a -->
     <transition>
-      <from>3</from>
-      <to>4</to>
+      <from>4</from>
+      <to>5</to>
       <read tape="1">a</read>
       <write tape="1">a</write>
       <move tape="1">R</move>
@@ -166,11 +208,9 @@
       <write tape="2">a</write>
       <move tape="2">R</move>
     </transition>
-
-    <!-- Símbolos iguais: b = b -->
     <transition>
-      <from>3</from>
-      <to>4</to>
+      <from>4</from>
+      <to>6</to>
       <read tape="1">b</read>
       <write tape="1">b</write>
       <move tape="1">R</move>
@@ -178,11 +218,20 @@
       <write tape="2">b</write>
       <move tape="2">R</move>
     </transition>
-
-    <!-- Loop de comparação q4 -->
     <transition>
       <from>4</from>
-      <to>4</to>
+      <to>8</to>
+      <read tape="1"> </read>
+      <write tape="1"> </write>
+      <move tape="1">S</move>
+      <read tape="2"> </read>
+      <write tape="2"> </write>
+      <move tape="2">S</move>
+    </transition>
+
+    <transition>
+      <from>5</from>
+      <to>5</to>
       <read tape="1">a</read>
       <write tape="1">a</write>
       <move tape="1">R</move>
@@ -190,10 +239,9 @@
       <write tape="2">a</write>
       <move tape="2">R</move>
     </transition>
-
     <transition>
-      <from>4</from>
-      <to>4</to>
+      <from>5</from>
+      <to>6</to>
       <read tape="1">b</read>
       <write tape="1">b</write>
       <move tape="1">R</move>
@@ -201,10 +249,55 @@
       <write tape="2">b</write>
       <move tape="2">R</move>
     </transition>
-
-    <!-- Fim simultâneo: ambas leram branco → ACEITA -->
     <transition>
-      <from>3</from>
+      <from>5</from>
+      <to>8</to>
+      <read tape="1"> </read>
+      <write tape="1"> </write>
+      <move tape="1">S</move>
+      <read tape="2"> </read>
+      <write tape="2"> </write>
+      <move tape="2">S</move>
+    </transition>
+
+    <transition>
+      <from>6</from>
+      <to>6</to>
+      <read tape="1">b</read>
+      <write tape="1">b</write>
+      <move tape="1">R</move>
+      <read tape="2">b</read>
+      <write tape="2">b</write>
+      <move tape="2">R</move>
+    </transition>
+    <transition>
+      <from>6</from>
+      <to>5</to>
+      <read tape="1">a</read>
+      <write tape="1">a</write>
+      <move tape="1">R</move>
+      <read tape="2">a</read>
+      <write tape="2">a</write>
+      <move tape="2">R</move>
+    </transition>
+    <transition>
+      <from>6</from>
+      <to>8</to>
+      <read tape="1"> </read>
+      <write tape="1"> </write>
+      <move tape="1">S</move>
+      <read tape="2"> </read>
+      <write tape="2"> </write>
+      <move tape="2">S</move>
+    </transition>
+
+    <!-- =====================================================
+         FASE 4: Fecho
+         q7 trata a cadeia vazia; q8 encerra a comparação.
+         ===================================================== -->
+
+    <transition>
+      <from>7</from>
       <to>9</to>
       <read tape="1"> </read>
       <write tape="1"> </write>
@@ -215,100 +308,10 @@
     </transition>
 
     <transition>
-      <from>4</from>
+      <from>8</from>
       <to>9</to>
       <read tape="1"> </read>
       <write tape="1"> </write>
-      <move tape="1">S</move>
-      <read tape="2"> </read>
-      <write tape="2"> </write>
-      <move tape="2">S</move>
-    </transition>
-
-    <!-- Símbolos diferentes → REJEITA -->
-    <transition>
-      <from>3</from>
-      <to>10</to>
-      <read tape="1">a</read>
-      <write tape="1">a</write>
-      <move tape="1">S</move>
-      <read tape="2">b</read>
-      <write tape="2">b</write>
-      <move tape="2">S</move>
-    </transition>
-
-    <transition>
-      <from>3</from>
-      <to>10</to>
-      <read tape="1">b</read>
-      <write tape="1">b</write>
-      <move tape="1">S</move>
-      <read tape="2">a</read>
-      <write tape="2">a</write>
-      <move tape="2">S</move>
-    </transition>
-
-    <transition>
-      <from>4</from>
-      <to>10</to>
-      <read tape="1">a</read>
-      <write tape="1">a</write>
-      <move tape="1">S</move>
-      <read tape="2">b</read>
-      <write tape="2">b</write>
-      <move tape="2">S</move>
-    </transition>
-
-    <transition>
-      <from>4</from>
-      <to>10</to>
-      <read tape="1">b</read>
-      <write tape="1">b</write>
-      <move tape="1">S</move>
-      <read tape="2">a</read>
-      <write tape="2">a</write>
-      <move tape="2">S</move>
-    </transition>
-
-    <!-- Fim assimétrico → REJEITA -->
-    <transition>
-      <from>3</from>
-      <to>10</to>
-      <read tape="1"> </read>
-      <write tape="1"> </write>
-      <move tape="1">S</move>
-      <read tape="2">a</read>
-      <write tape="2">a</write>
-      <move tape="2">S</move>
-    </transition>
-
-    <transition>
-      <from>3</from>
-      <to>10</to>
-      <read tape="1"> </read>
-      <write tape="1"> </write>
-      <move tape="1">S</move>
-      <read tape="2">b</read>
-      <write tape="2">b</write>
-      <move tape="2">S</move>
-    </transition>
-
-    <transition>
-      <from>3</from>
-      <to>10</to>
-      <read tape="1">a</read>
-      <write tape="1">a</write>
-      <move tape="1">S</move>
-      <read tape="2"> </read>
-      <write tape="2"> </write>
-      <move tape="2">S</move>
-    </transition>
-
-    <transition>
-      <from>3</from>
-      <to>10</to>
-      <read tape="1">b</read>
-      <write tape="1">b</write>
       <move tape="1">S</move>
       <read tape="2"> </read>
       <write tape="2"> </write>

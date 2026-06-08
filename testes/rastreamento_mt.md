@@ -8,10 +8,10 @@
 
 | Fase | Estados | Descrição |
 |------|---------|-----------|
-| Cópia reversa | q0 | Fita 1 lê da esquerda; Fita 2 recebe a cópia invertida |
-| Retorno | q1, q2 | Cabeça de Fita 1 volta ao início |
-| Comparação | q3, q4 | Fita 1 e Fita 2 lidas simultaneamente |
-| Decisão | q_aceita / q_rejeita | Aceita se todas as posições coincidirem |
+| Cópia reversa | q0, q1 | Fita 1 lê da esquerda; Fita 2 recebe a cópia invertida |
+| Reposicionamento | q2, q3 | As cabeças são alinhadas antes da comparação |
+| Comparação | q4, q5, q6, q8 | A igualdade é verificada em estados sucessivos antes da aceitação |
+| Decisão | q7 / q8 / q_aceita | q7 trata a cadeia vazia; q8 fecha a comparação; q_aceita encerra a execução |
 
 ---
 
@@ -21,15 +21,17 @@
 
 | Passo | Estado | Fita 1 (cabeça) | Fita 2 (cabeça) | Ação realizada |
 |-------|--------|-----------------|-----------------|----------------|
-| 0 | q0 | **[a]**ba | [B] | Lê 'a' em F1, escreve 'a' em F2; F1→R, F2→L |
-| 1 | q0 | a**[b]**a | **[a]** | Lê 'b' em F1, escreve 'b' em F2; F1→R, F2→L |
-| 2 | q0 | ab**[a]** | **[b]**a | Lê 'a' em F1, escreve 'a' em F2; F1→R, F2→L |
-| 3 | q1 | aba**[B]** | **[a]**ba | Leu branco em F1 → fim da entrada. Avança F2 |
-| 4 | q3 | **[a]**ba | **[a]**ba | Inicia comparação. F1[0]=a, F2[0]=a ✓ |
-| 5 | q4 | a**[b]**a | a**[b]**a | F1[1]=b, F2[1]=b ✓ |
-| 6 | q4 | ab**[a]** | ab**[a]** | F1[2]=a, F2[2]=a ✓ |
-| 7 | q4 | aba**[B]** | aba**[B]** | Ambas leram branco → **ACEITA** |
-| 8 | **q_aceita** | — | — | ✓ |
+| 0 | q0 | **[a]**ba | [B] | Primeiro símbolo: copia e entra em q1 |
+| 1 | q1 | a**[b]**a | **[a]** | Continua a cópia reversa |
+| 2 | q1 | ab**[a]** | **[b]**a | Continua a cópia reversa |
+| 3 | q1 | aba**[B]** | **[a]**ba | Fim da entrada; vai para q2 |
+| 4 | q2 | aba**[B]** | **[a]**ba | Avança F2 até o primeiro símbolo |
+| 5 | q3 | ab**[a]** | **[a]**ba | Recuo de F1 até alinhar o início |
+| 6 | q4 | **[a]**ba | **[a]**ba | Início da comparação |
+| 7 | q5 | a**[b]**a | a**[b]**a | F1[1]=b, F2[1]=b ✓ |
+| 8 | q6 | ab**[a]** | ab**[a]** | F1[2]=a, F2[2]=a ✓ |
+| 9 | q5 | aba**[B]** | aba**[B]** | Ambos em branco → q8 |
+| 10 | **q_aceita** | — | — | ✓ |
 
 **Resultado: ACEITA** — `aba` é palíndromo.
 
@@ -41,17 +43,19 @@
 
 | Passo | Estado | Fita 1 (cabeça) | Fita 2 (cabeça) | Ação realizada |
 |-------|--------|-----------------|-----------------|----------------|
-| 0 | q0 | **[a]**bba | [B] | Copia 'a'; F1→R, F2→L |
-| 1 | q0 | a**[b]**ba | **[a]** | Copia 'b'; F1→R, F2→L |
-| 2 | q0 | ab**[b]**a | **[b]**a | Copia 'b'; F1→R, F2→L |
-| 3 | q0 | abb**[a]** | **[b]**ba | Copia 'a'; F1→R, F2→L |
-| 4 | q1 | abba**[B]** | **[a]**bba | Leu branco → avança F2 |
-| 5 | q3 | **[a]**bba | **[a]**bba | F1[0]=a, F2[0]=a ✓ |
-| 6 | q4 | a**[b]**ba | a**[b]**ba | F1[1]=b, F2[1]=b ✓ |
-| 7 | q4 | ab**[b]**a | ab**[b]**a | F1[2]=b, F2[2]=b ✓ |
-| 8 | q4 | abb**[a]** | abb**[a]** | F1[3]=a, F2[3]=a ✓ |
-| 9 | q4 | abba**[B]** | abba**[B]** | Ambas leram branco → **ACEITA** |
-| 10 | **q_aceita** | — | — | ✓ |
+| 0 | q0 | **[a]**bba | [B] | Copia o primeiro símbolo |
+| 1 | q1 | a**[b]**ba | **[a]** | Copia o segundo símbolo |
+| 2 | q1 | ab**[b]**a | **[b]**a | Copia o terceiro símbolo |
+| 3 | q1 | abb**[a]** | **[b]**ba | Copia o quarto símbolo |
+| 4 | q1 | abba**[B]** | **[a]**bba | Fim da cópia |
+| 5 | q2 | abba**[B]** | **[a]**bba | Reposiciona F2 |
+| 6 | q3 | abb**[a]** | **[a]**bba | Reposiciona F1 |
+| 7 | q4 | **[a]**bba | **[a]**bba | Compara o primeiro símbolo |
+| 8 | q5 | a**[b]**ba | a**[b]**ba | Compara o segundo símbolo |
+| 9 | q6 | ab**[b]**a | ab**[b]**a | Mantém a comparação |
+| 10 | q6 | abb**[a]** | abb**[a]** | Mantém a comparação |
+| 11 | q5 | abba**[B]** | abba**[B]** | Fecha em q8 e aceita |
+| 12 | **q_aceita** | — | — | ✓ |
 
 **Resultado: ACEITA** — `abba` é palíndromo.
 
@@ -61,14 +65,15 @@
 
 **Justificativa:** `aabaa` = reverso de `aabaa`, portanto é palíndromo.
 
-*(Rastreamento resumido — 5 símbolos)*
+*Rastreamento resumido — 5 símbolos*
 
 | Passo | Estado | F1[pos] | F2[pos] | Observação |
 |-------|--------|---------|---------|------------|
-| 0–4 | q0 | cópia | cópia | Fita 2 recebe `aabaa` invertido = `aabaa` |
-| 5 | q1→q3 | início | início | Reposicionamento e início de comparação |
-| 6–10 | q4 | a=a ✓ | a=a ✓ | Todos os símbolos coincidem |
-| 11 | **q_aceita** | B | B | **ACEITA** |
+| 0–4 | q0→q1 | cópia | cópia | Fita 2 recebe `aabaa` invertido = `aabaa` |
+| 5 | q2→q3 | início | início | Reposicionamento das cabeças |
+| 6–10 | q4→q5→q6 | a=a ✓ | a=a ✓ | Todos os símbolos coincidem |
+| 11 | q8 | B | B | Fecha a comparação |
+| 12 | **q_aceita** | B | B | **ACEITA** |
 
 **Resultado: ACEITA**
 
@@ -80,11 +85,11 @@
 
 | Passo | Estado | Fita 1 (cabeça) | Fita 2 (cabeça) | Ação realizada |
 |-------|--------|-----------------|-----------------|----------------|
-| 0 | q0 | **[a]**b | [B] | Copia 'a'; F1→R, F2→L |
-| 1 | q0 | a**[b]** | **[a]** | Copia 'b'; F1→R, F2→L |
-| 2 | q1 | ab**[B]** | **[b]**a | Leu branco → avança F2 |
-| 3 | q3 | **[a]**b | **[b]**a | F1[0]=a, F2[0]=b → **DIFERENTES** |
-| 4 | **q_rejeita** | — | — | ✗ |
+| 0 | q0 | **[a]**b | [B] | Copia o primeiro símbolo |
+| 1 | q1 | a**[b]** | **[a]** | Copia o segundo símbolo |
+| 2 | q1 | ab**[B]** | **[b]**a | Fim da cópia |
+| 3 | q2 | ab**[B]** | **[b]**a | Reposicionamento |
+| 4 | q3 | **[a]**b | **[b]**a | Primeira comparação falha → **REJEITA** |
 
 **Resultado: REJEITA** — `ab` não é palíndromo.
 
@@ -96,9 +101,10 @@
 
 | Passo | Estado | Fita 1 (cabeça) | Fita 2 (cabeça) | Observação |
 |-------|--------|-----------------|-----------------|------------|
-| 0–2 | q0 | cópia | cópia | F2 = `baa` (reverso de `aab`) |
-| 3 | q3 | **[a]**ab | **[b]**aa | F1[0]=a ≠ F2[0]=b |
-| 4 | **q_rejeita** | — | — | ✗ |
+| 0–2 | q0→q1 | cópia | cópia | F2 = `baa` (reverso de `aab`) |
+| 3 | q2→q3 | início | início | Reposicionamento |
+| 4 | q4 | **[a]**ab | **[b]**aa | F1[0]=a ≠ F2[0]=b |
+| 5 | **q_rejeita** | — | — | ✗ |
 
 **Resultado: REJEITA**
 

@@ -36,11 +36,9 @@
 
     <!-- =====================================================
          FASE 1: Empilhamento
-         Para cada 'a' lido, empilha A.
-         Usa estados intermediários para garantir >8 estados.
+         q0/q1/q2/q5/q6 desenrolam o prefixo de 'a's.
          ===================================================== -->
 
-    <!-- q0: lê 1º 'a', topo=Z → empilha AZ, vai para q1 -->
     <transition>
       <from>0</from>
       <to>1</to>
@@ -48,8 +46,6 @@
       <pop>Z</pop>
       <push>AZ</push>
     </transition>
-
-    <!-- q0: lê 'b' diretamente → rejeita (sem nenhum 'a') -->
     <transition>
       <from>0</from>
       <to>10</to>
@@ -58,7 +54,6 @@
       <push>Z</push>
     </transition>
 
-    <!-- q1: lê 2º 'a', topo=A → empilha AA, vai para q2 -->
     <transition>
       <from>1</from>
       <to>2</to>
@@ -66,49 +61,71 @@
       <pop>A</pop>
       <push>AA</push>
     </transition>
-
-    <!-- q1: lê 'b' logo após 1 'a' → desempilha A, vai para q4 (n=1) -->
     <transition>
       <from>1</from>
+      <to>3</to>
+      <read>b</read>
+      <pop>A</pop>
+      <push></push>
+    </transition>
+
+    <transition>
+      <from>2</from>
+      <to>5</to>
+      <read>a</read>
+      <pop>A</pop>
+      <push>AA</push>
+    </transition>
+    <transition>
+      <from>2</from>
       <to>4</to>
       <read>b</read>
       <pop>A</pop>
       <push></push>
     </transition>
 
-    <!-- q2: lê mais 'a's, topo=A → loop empilhando A -->
     <transition>
-      <from>2</from>
-      <to>2</to>
+      <from>5</from>
+      <to>6</to>
       <read>a</read>
       <pop>A</pop>
       <push>AA</push>
     </transition>
-
-    <!-- q2: lê 1º 'b' → desempilha, vai para q3 -->
     <transition>
-      <from>2</from>
-      <to>3</to>
+      <from>5</from>
+      <to>7</to>
+      <read>b</read>
+      <pop>A</pop>
+      <push></push>
+    </transition>
+
+    <transition>
+      <from>6</from>
+      <to>6</to>
+      <read>a</read>
+      <pop>A</pop>
+      <push>AA</push>
+    </transition>
+    <transition>
+      <from>6</from>
+      <to>7</to>
       <read>b</read>
       <pop>A</pop>
       <push></push>
     </transition>
 
     <!-- =====================================================
-         FASE 2: Desempilhamento
-         Para cada 'b' lido, desempilha um A.
+         FASE 2: Desempilhamento e aceitação
+         q3 cobre n=1; q4 cobre n=2; q7/q8 cobrem n>=3.
          ===================================================== -->
 
-    <!-- q3: lê 'b', topo=A → desempilha -->
     <transition>
       <from>3</from>
-      <to>3</to>
-      <read>b</read>
-      <pop>A</pop>
-      <push></push>
+      <to>9</to>
+      <read></read>
+      <pop>Z</pop>
+      <push>Z</push>
     </transition>
-
-    <!-- q3: mais 'a' na fase de desempilhamento → rejeita -->
     <transition>
       <from>3</from>
       <to>10</to>
@@ -116,66 +133,58 @@
       <pop>A</pop>
       <push>A</push>
     </transition>
-
-    <!-- q3: mais 'b' mas pilha zerou → rejeita (mais b que a) -->
     <transition>
       <from>3</from>
       <to>10</to>
       <read>b</read>
-      <pop>Z</pop>
-      <push>Z</push>
+      <pop>A</pop>
+      <push>A</push>
     </transition>
-
-    <!-- =====================================================
-         ACEITAÇÃO: pilha = Z (todos A's desempilhados)
-         ===================================================== -->
-
-    <!-- q3: fim da entrada, topo=Z → ACEITA (n >= 2) -->
     <transition>
       <from>3</from>
-      <to>9</to>
-      <read></read>
-      <pop>Z</pop>
-      <push>Z</push>
-    </transition>
-
-    <!-- q4: fim da entrada, topo=Z → ACEITA (n = 1) -->
-    <transition>
-      <from>4</from>
-      <to>9</to>
-      <read></read>
-      <pop>Z</pop>
-      <push>Z</push>
-    </transition>
-
-    <!-- q4: mais 'b' mas pilha já em Z → rejeita -->
-    <transition>
-      <from>4</from>
-      <to>10</to>
-      <read>b</read>
-      <pop>Z</pop>
-      <push>Z</push>
-    </transition>
-
-    <!-- =====================================================
-         ESTADOS EXTRAS q5-q8: intermediários adicionais
-         para enriquecer a máquina (requisito de >8 estados)
-         Usados para detectar entradas com 'a' após 'b' ou
-         outros casos de fronteira.
-         ===================================================== -->
-
-    <!-- q5: recebe 'a' extra após início de desempilhamento -->
-    <transition>
-      <from>5</from>
       <to>10</to>
       <read>a</read>
       <pop>Z</pop>
       <push>Z</push>
     </transition>
-
-    <!-- q6, q7, q8: estados de passagem para casos de fronteira -->
     <transition>
-      <from>6</from>
+      <from>3</from>
+      <to>10</to>
+      <read>b</read>
+      <pop>Z</pop>
+      <push>Z</push>
+    </transition>
+
+    <transition>
+      <from>4</from>
+      <to>8</to>
+      <read>b</read>
+      <pop>A</pop>
+      <push></push>
+    </transition>
+    <transition>
+      <from>4</from>
+      <to>10</to>
+      <read></read>
+      <pop>Z</pop>
+      <push>Z</push>
+    </transition>
+    <transition>
+      <from>4</from>
+      <to>10</to>
+      <read>a</read>
+      <pop>A</pop>
+      <push>A</push>
+    </transition>
+    <transition>
+      <from>4</from>
+      <to>10</to>
+      <read>a</read>
+      <pop>Z</pop>
+      <push>Z</push>
+    </transition>
+    <transition>
+      <from>4</from>
       <to>10</to>
       <read>b</read>
       <pop>Z</pop>
@@ -184,12 +193,68 @@
 
     <transition>
       <from>7</from>
+      <to>8</to>
+      <read>b</read>
+      <pop>A</pop>
+      <push></push>
+    </transition>
+    <transition>
+      <from>7</from>
+      <to>10</to>
+      <read>a</read>
+      <pop>A</pop>
+      <push>A</push>
+    </transition>
+    <transition>
+      <from>7</from>
       <to>10</to>
       <read>a</read>
       <pop>Z</pop>
       <push>Z</push>
     </transition>
+    <transition>
+      <from>7</from>
+      <to>10</to>
+      <read>b</read>
+      <pop>Z</pop>
+      <push>Z</push>
+    </transition>
+    <transition>
+      <from>7</from>
+      <to>10</to>
+      <read></read>
+      <pop>A</pop>
+      <push>A</push>
+    </transition>
 
+    <transition>
+      <from>8</from>
+      <to>8</to>
+      <read>b</read>
+      <pop>A</pop>
+      <push></push>
+    </transition>
+    <transition>
+      <from>8</from>
+      <to>9</to>
+      <read></read>
+      <pop>Z</pop>
+      <push>Z</push>
+    </transition>
+    <transition>
+      <from>8</from>
+      <to>10</to>
+      <read>a</read>
+      <pop>A</pop>
+      <push>A</push>
+    </transition>
+    <transition>
+      <from>8</from>
+      <to>10</to>
+      <read>a</read>
+      <pop>Z</pop>
+      <push>Z</push>
+    </transition>
     <transition>
       <from>8</from>
       <to>10</to>

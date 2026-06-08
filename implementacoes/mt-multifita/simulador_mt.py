@@ -13,8 +13,8 @@ Definição formal:
 Funcionamento:
   Fase 1 (cópia reversa): Fita 1 lê da esquerda para a direita;
                           Fita 2 recebe os símbolos da direita para a esquerda.
-  Fase 2 (retorno):       Cabeça da Fita 1 volta ao início.
-  Fase 3 (comparação):    Fita 1 e Fita 2 são lidas simultaneamente.
+    Fase 2 (reposicionamento): q1, q2 e q3 alinham as cabeças antes da comparação.
+    Fase 3 (comparação):    q4..q8 desenrolam a comparação antes do estado final.
   Decisão: aceita se todos os símbolos coincidirem até o branco.
 
 Referência: Diverio & Menezes, Teoria da Computação, 3.ed., cap. 5
@@ -72,16 +72,16 @@ def construir_transicoes() -> dict:
     Formato: delta[(estado, leitura_fita1, leitura_fita2)]
              = (prox_estado, escrita_fita1, dir_fita1, escrita_fita2, dir_fita2)
 
-    Estados:
-      q0  — cópia reversa (lê Fita1, escreve Fita2 ao contrário)
-      q1  — detectou fim da entrada (leu branco em Fita1)
-      q2  — retorno da cabeça de Fita1 para o início
-      q3  — início da comparação
-      q4  — comparando (loop)
-      q5  — verificou 'a'='a'
-      q6  — verificou 'b'='b'
-      q7  — preparando próxima comparação
-      q8  — encontrou fim das duas fitas simultaneamente
+        Estados:
+            q0  — primeiro símbolo / detecção de cadeia vazia
+            q1  — cópia reversa em loop até o branco final
+            q2  — avanço de Fita2 até o primeiro símbolo copiado
+            q3  — retorno de Fita1 até o início do conteúdo
+            q4  — comparação inicial
+            q5  — comparação após ler 'a'='a'
+            q6  — comparação após ler 'b'='b'
+            q7  — aceitação da cadeia vazia
+            q8  — confirmação final da comparação
       q_aceita — aceita
       q_rejeita — rejeita
     """
@@ -89,62 +89,63 @@ def construir_transicoes() -> dict:
 
     # -----------------------------------------------------------------------
     # FASE 1: Cópia reversa
-    # Fita1 move R; Fita2 move L (escreve de trás para frente)
+    # q0 trata o primeiro símbolo e q1 mantém o laço de cópia.
     # -----------------------------------------------------------------------
     for s in ('a', 'b'):
-        # q0: lendo símbolo em Fita1, qualquer coisa na Fita2 (usamos B pois
-        # Fita2 começa vazia e a cabeça vai recuando)
-        delta[('q0', s, BRANCO)] = ('q0', s, 'R', s, 'L')
-
-    # q0: leu branco em Fita1 → fim da entrada → vai para q1
-    delta[('q0', BRANCO, BRANCO)] = ('q1', BRANCO, 'S', BRANCO, 'R')
+        delta[('q0', s, BRANCO)] = ('q1', s, 'R', s, 'L')
+        delta[('q1', s, BRANCO)] = ('q1', s, 'R', s, 'L')
+    delta[('q0', BRANCO, BRANCO)] = ('q7', BRANCO, 'S', BRANCO, 'S')
+    delta[('q1', BRANCO, BRANCO)] = ('q2', BRANCO, 'S', BRANCO, 'R')
 
     # -----------------------------------------------------------------------
-    # FASE 2: Avanço de Fita2 até o início do conteúdo copiado
-    # (Fita2 está com a cabeça uma posição além do último símbolo escrito)
-    # q1: avança Fita2 para a direita até encontrar o primeiro símbolo
+    # FASE 2: Reposicionamento das cabeças
+    # q2 avança Fita2 até o primeiro símbolo copiado.
+    # q3 recua Fita1 até o branco da esquerda e volta para o primeiro símbolo.
     # -----------------------------------------------------------------------
-    delta[('q1', BRANCO, BRANCO)] = ('q2', BRANCO, 'L', BRANCO, 'S')
+    delta[('q2', BRANCO, BRANCO)] = ('q2', BRANCO, 'S', BRANCO, 'R')
     for s in ('a', 'b'):
-        delta[('q1', BRANCO, s)]  = ('q3', BRANCO, 'R', s, 'S')
+        delta[('q2', BRANCO, s)] = ('q3', BRANCO, 'L', s, 'S')
+        delta[('q3', s, 'a')] = ('q3', s, 'L', 'a', 'S')
+        delta[('q3', s, 'b')] = ('q3', s, 'L', 'b', 'S')
+        delta[('q3', s, BRANCO)] = ('q_rejeita', s, 'S', BRANCO, 'S')
+    delta[('q3', BRANCO, 'a')] = ('q4', BRANCO, 'R', 'a', 'S')
+    delta[('q3', BRANCO, 'b')] = ('q4', BRANCO, 'R', 'b', 'S')
 
     # -----------------------------------------------------------------------
-    # FASE 2b: Retorno de Fita1 ao início
-    # q2: Fita1 recua para a esquerda até encontrar branco
+    # FASE 3: Comparação simultânea desenrolada em estados sucessivos
     # -----------------------------------------------------------------------
-    for s in ('a', 'b'):
-        delta[('q2', s, BRANCO)] = ('q2', s, 'L', BRANCO, 'S')
-    delta[('q2', BRANCO, BRANCO)] = ('q3', BRANCO, 'R', BRANCO, 'S')
+    delta[('q4', 'a', 'a')] = ('q5', 'a', 'R', 'a', 'R')
+    delta[('q4', 'b', 'b')] = ('q6', 'b', 'R', 'b', 'R')
+    delta[('q4', BRANCO, BRANCO)] = ('q8', BRANCO, 'S', BRANCO, 'S')
 
-    # -----------------------------------------------------------------------
-    # FASE 3: Comparação simultânea
-    # q3/q4: lê Fita1 e Fita2 ao mesmo tempo
-    # -----------------------------------------------------------------------
-    # Símbolos iguais → continua
-    delta[('q3', 'a', 'a')] = ('q4', 'a', 'R', 'a', 'R')
-    delta[('q3', 'b', 'b')] = ('q4', 'b', 'R', 'b', 'R')
-    delta[('q4', 'a', 'a')] = ('q4', 'a', 'R', 'a', 'R')
-    delta[('q4', 'b', 'b')] = ('q4', 'b', 'R', 'b', 'R')
+    delta[('q5', 'a', 'a')] = ('q5', 'a', 'R', 'a', 'R')
+    delta[('q5', 'b', 'b')] = ('q6', 'b', 'R', 'b', 'R')
+    delta[('q5', BRANCO, BRANCO)] = ('q8', BRANCO, 'S', BRANCO, 'S')
 
-    # Símbolos diferentes → rejeita
-    delta[('q3', 'a', 'b')] = ('q_rejeita', 'a', 'S', 'b', 'S')
-    delta[('q3', 'b', 'a')] = ('q_rejeita', 'b', 'S', 'a', 'S')
-    delta[('q4', 'a', 'b')] = ('q_rejeita', 'a', 'S', 'b', 'S')
-    delta[('q4', 'b', 'a')] = ('q_rejeita', 'b', 'S', 'a', 'S')
+    delta[('q6', 'b', 'b')] = ('q6', 'b', 'R', 'b', 'R')
+    delta[('q6', 'a', 'a')] = ('q5', 'a', 'R', 'a', 'R')
+    delta[('q6', BRANCO, BRANCO)] = ('q8', BRANCO, 'S', BRANCO, 'S')
 
-    # Fim simultâneo (ambas leram branco) → aceita
-    delta[('q3', BRANCO, BRANCO)] = ('q_aceita', BRANCO, 'S', BRANCO, 'S')
-    delta[('q4', BRANCO, BRANCO)] = ('q_aceita', BRANCO, 'S', BRANCO, 'S')
+    # Cadeia vazia e confirmação final
+    delta[('q7', BRANCO, BRANCO)] = ('q_aceita', BRANCO, 'S', BRANCO, 'S')
+    delta[('q8', BRANCO, BRANCO)] = ('q_aceita', BRANCO, 'S', BRANCO, 'S')
 
-    # Fim assimétrico → rejeita
-    delta[('q3', BRANCO, 'a')] = ('q_rejeita', BRANCO, 'S', 'a', 'S')
-    delta[('q3', BRANCO, 'b')] = ('q_rejeita', BRANCO, 'S', 'b', 'S')
-    delta[('q3', 'a', BRANCO)] = ('q_rejeita', 'a', 'S', BRANCO, 'S')
-    delta[('q3', 'b', BRANCO)] = ('q_rejeita', 'b', 'S', BRANCO, 'S')
-    delta[('q4', BRANCO, 'a')] = ('q_rejeita', BRANCO, 'S', 'a', 'S')
-    delta[('q4', BRANCO, 'b')] = ('q_rejeita', BRANCO, 'S', 'b', 'S')
-    delta[('q4', 'a', BRANCO)] = ('q_rejeita', 'a', 'S', BRANCO, 'S')
-    delta[('q4', 'b', BRANCO)] = ('q_rejeita', 'b', 'S', BRANCO, 'S')
+    # Rejeição por qualquer assimetria ou símbolo inesperado nas fases finais
+    for estado in ('q4', 'q5', 'q6', 'q7', 'q8'):
+        for l1 in ('a', 'b', BRANCO):
+            for l2 in ('a', 'b', BRANCO):
+                if l1 == l2 == BRANCO:
+                    continue
+                if estado in ('q7', 'q8') and l1 == l2 == BRANCO:
+                    continue
+                if estado in ('q4', 'q5', 'q6') and l1 == l2 and l1 in ('a', 'b'):
+                    continue
+                if estado == 'q7' and l1 == l2 == BRANCO:
+                    continue
+                if estado == 'q8' and l1 == l2 == BRANCO:
+                    continue
+                if (estado, l1, l2) not in delta:
+                    delta[(estado, l1, l2)] = ('q_rejeita', l1, 'S', l2, 'S')
 
     return delta
 
@@ -186,35 +187,6 @@ class MTMultifita:
 
 
         while estado not in self.ESTADOS_FINAIS:
-            # Correção: quando chegamos em q1, reposicionamos explicitamente
-            # as cabeças para iniciar a comparação: Fita1 -> início (pos 0)
-            # e Fita2 -> menor índice escrito (início da cópia invertida).
-            # Isso evita dependência frágil nas combinações de movimentos
-            # definidas na tabela de transições que podem deixar as cabeças
-            # em posições além do conteúdo.
-            if estado == 'q1':
-                # posicionar Fita1 no início do conteúdo (índice 0)
-                fita1.ir_para(0)
-                # posicionar Fita2 no início da cópia invertida.
-                # Evitar posições onde foi escrito branco por transições auxiliares:
-                if hasattr(fita2, '_cells') and fita2._cells:
-                    keys = sorted(fita2._cells.keys())
-                    lo = None
-                    for k in keys:
-                        if fita2._cells.get(k) != BRANCO:
-                            lo = k
-                            break
-                    if lo is None:
-                        lo = keys[0]
-                    fita2.ir_para(lo)
-                else:
-                    fita2.ir_para(0)
-                if verbose:
-                    print(f"  {passo:<6} {estado:<12} posicionando cabeças -> F1:{fita1.posicao()} F2:{fita2.posicao()}")
-                estado = 'q3'
-                # não incrementamos o passo aqui; prossiga para a próxima iteração
-                continue
-
             l1 = fita1.ler()
             l2 = fita2.ler()
 

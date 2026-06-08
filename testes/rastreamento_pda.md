@@ -8,9 +8,9 @@
 
 | Fase | Estados | Descrição |
 |------|---------|-----------|
-| Empilhamento | q0, q1, q2 | Lê 'a's e empilha A para cada um |
-| Transição | q1/q2 → q3/q4 | Ao ler o 1º 'b', muda de fase |
-| Desempilhamento | q3, q4 | Lê 'b's e desempilha um A por 'b' |
+| Empilhamento | q0, q1, q2, q5, q6 | Lê 'a's e empilha A, com os primeiros símbolos desenrolados em estados distintos |
+| Transição | q1/q2/q5/q6 → q3/q4/q7 | Ao ler o 1º 'b', entra no ramo correto conforme o número de 'a's lidos |
+| Desempilhamento | q7, q8 | Continua desempilhando um A por 'b' até a pilha voltar a Z0 |
 | Decisão | q_aceita / q_rejeita | Aceita se pilha = [Z0] ao fim |
 
 **Legenda da pilha:** Z0 = fundo, A = símbolo empilhado  
@@ -40,9 +40,9 @@ Pilha mostrada como [topo → fundo]: `[A, A, Z0]` = dois A's sobre Z0
 |-------|--------|------|------|------------|----------|------|
 | 0 | q0 | a | Z0 | [A, Z0] | q1 | Empilha A |
 | 1 | q1 | a | A | [A, A, Z0] | q2 | Empilha A |
-| 2 | q2 | b | A | [A, Z0] | q3 | Desempilha A |
-| 3 | q3 | b | A | [Z0] | q3 | Desempilha A |
-| 4 | q3 | ε | Z0 | [Z0] | **q_aceita** | Pilha = Z0 ✓ |
+| 2 | q2 | b | A | [A, Z0] | q4 | Desempilha A |
+| 3 | q4 | b | A | [Z0] | q8 | Desempilha A |
+| 4 | q8 | ε | Z0 | [Z0] | **q_aceita** | Pilha = Z0 ✓ |
 
 **Resultado: ACEITA** — `aabb` ∈ L com n=2.
 
@@ -56,11 +56,11 @@ Pilha mostrada como [topo → fundo]: `[A, A, Z0]` = dois A's sobre Z0
 |-------|--------|------|------|------------|----------|------|
 | 0 | q0 | a | Z0 | [A, Z0] | q1 | Empilha A |
 | 1 | q1 | a | A | [A, A, Z0] | q2 | Empilha A |
-| 2 | q2 | a | A | [A, A, A, Z0] | q2 | Empilha A (loop) |
-| 3 | q2 | b | A | [A, A, Z0] | q3 | Desempilha A |
-| 4 | q3 | b | A | [A, Z0] | q3 | Desempilha A |
-| 5 | q3 | b | A | [Z0] | q3 | Desempilha A |
-| 6 | q3 | ε | Z0 | [Z0] | **q_aceita** | Pilha = Z0 ✓ |
+| 2 | q2 | a | A | [A, A, A, Z0] | q5 | Empilha A |
+| 3 | q5 | b | A | [A, A, Z0] | q7 | Desempilha A |
+| 4 | q7 | b | A | [A, Z0] | q8 | Desempilha A |
+| 5 | q8 | b | A | [Z0] | q8 | Desempilha A (loop) |
+| 6 | q8 | ε | Z0 | [Z0] | **q_aceita** | Pilha = Z0 ✓ |
 
 **Resultado: ACEITA** — `aaabbb` ∈ L com n=3.
 
@@ -74,8 +74,8 @@ Pilha mostrada como [topo → fundo]: `[A, A, Z0]` = dois A's sobre Z0
 |-------|--------|------|------|------------|----------|------|
 | 0 | q0 | a | Z0 | [A, Z0] | q1 | Empilha A |
 | 1 | q1 | a | A | [A, A, Z0] | q2 | Empilha A |
-| 2 | q2 | b | A | [A, Z0] | q3 | Desempilha A |
-| 3 | q3 | ε | A | [A, Z0] | **q_rejeita** | Pilha ≠ Z0 — sobrou A ✗ |
+| 2 | q2 | b | A | [A, Z0] | q4 | Desempilha A |
+| 3 | q4 | ε | A | [A, Z0] | **q_rejeita** | Pilha ≠ Z0 — faltou um b ✗ |
 
 **Resultado: REJEITA** — `aab` ∉ L (mais a's que b's).
 
@@ -88,8 +88,8 @@ Pilha mostrada como [topo → fundo]: `[A, A, Z0]` = dois A's sobre Z0
 | Passo | Estado | Lido | Topo | Pilha após | → Estado | Ação |
 |-------|--------|------|------|------------|----------|------|
 | 0 | q0 | a | Z0 | [A, Z0] | q1 | Empilha A |
-| 1 | q1 | b | A | [Z0] | q4 | Desempilha A |
-| 2 | q4 | b | Z0 | [Z0] | **q_rejeita** | Sem transição para b com Z0 ✗ |
+| 1 | q1 | b | A | [Z0] | q3 | Desempilha A |
+| 2 | q3 | b | Z0 | [Z0] | **q_rejeita** | Sem transição para b com Z0 ✗ |
 
 **Resultado: REJEITA** — `abb` ∉ L (mais b's que a's).
 

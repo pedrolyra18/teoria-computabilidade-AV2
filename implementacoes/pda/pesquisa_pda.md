@@ -75,15 +75,37 @@ F  = {q_aceita}
 | q0 | a | Z0 | q1 | empilha A (pilha: AZ0) |
 | q0 | b | Z0 | q_rejeita | noop |
 | q1 | a | A | q2 | empilha A (pilha: AAZ0) |
-| q1 | b | A | q4 | desempilha A |
-| q2 | a | A | q2 | empilha A (loop) |
-| q2 | b | A | q3 | desempilha A |
-| q3 | b | A | q3 | desempilha A (loop) |
-| q3 | a | A | q_rejeita | noop |
-| q3 | b | Z0 | q_rejeita | noop |
+| q1 | b | A | q3 | desempilha A |
+| q2 | a | A | q5 | empilha A (pilha: AAAZ0) |
+| q2 | b | A | q4 | desempilha A |
 | q3 | ε | Z0 | q_aceita | noop |
+| q3 | a | A | q_rejeita | noop |
+| q3 | b | A | q_rejeita | noop |
+| q3 | a | Z0 | q_rejeita | noop |
+| q3 | b | Z0 | q_rejeita | noop |
+| q4 | b | A | q8 | desempilha A |
+| q4 | ε | Z0 | q_rejeita | noop |
+| q4 | a | A | q_rejeita | noop |
+| q4 | a | Z0 | q_rejeita | noop |
 | q4 | b | Z0 | q_rejeita | noop |
-| q4 | ε | Z0 | q_aceita | noop |
+| q5 | a | A | q6 | empilha A (pilha: AAAAZ0) |
+| q5 | b | A | q7 | desempilha A |
+| q5 | a | Z0 | q_rejeita | noop |
+| q5 | b | Z0 | q_rejeita | noop |
+| q6 | a | A | q6 | empilha A (loop) |
+| q6 | b | A | q7 | desempilha A |
+| q6 | a | Z0 | q_rejeita | noop |
+| q6 | b | Z0 | q_rejeita | noop |
+| q7 | b | A | q8 | desempilha A |
+| q7 | a | A | q_rejeita | noop |
+| q7 | a | Z0 | q_rejeita | noop |
+| q7 | b | Z0 | q_rejeita | noop |
+| q7 | ε | A | q_rejeita | noop |
+| q8 | b | A | q8 | desempilha A (loop) |
+| q8 | ε | Z0 | q_aceita | noop |
+| q8 | a | A | q_rejeita | noop |
+| q8 | a | Z0 | q_rejeita | noop |
+| q8 | b | Z0 | q_rejeita | noop |
 
 ### Exemplo de computação para `aabb`
 
@@ -92,9 +114,9 @@ Configuração inicial: (q0, aabb, Z0)
 
 Passo 1: δ(q0, a, Z0) = (q1, AZ0)   → (q1, abb, AZ0)
 Passo 2: δ(q1, a, A)  = (q2, AAZ0)  → (q2, bb, AAZ0)
-Passo 3: δ(q2, b, A)  = (q3, AZ0)   → (q3, b, AZ0)
-Passo 4: δ(q3, b, A)  = (q3, Z0)    → (q3, ε, Z0)
-Passo 5: δ(q3, ε, Z0) = (q_aceita, Z0) → ACEITA
+Passo 3: δ(q2, b, A)  = (q4, AZ0)   → (q4, b, AZ0)
+Passo 4: δ(q4, b, A)  = (q8, Z0)    → (q8, ε, Z0)
+Passo 5: δ(q8, ε, Z0) = (q_aceita, Z0) → ACEITA
 ```
 
 ---

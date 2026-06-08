@@ -67,24 +67,32 @@ q₀ = q0
 
 | Estado | Lê F1 | Lê F2 | Escreve F1 | Dir F1 | Escreve F2 | Dir F2 | Próx. estado |
 |--------|--------|--------|------------|--------|------------|--------|--------------|
-| q0 | a | B | a | R | a | L | q0 |
-| q0 | b | B | b | R | b | L | q0 |
-| q0 | B | B | B | S | B | R | q1 |
-| q1 | B | a | B | R | a | S | q3 |
-| q1 | B | b | B | R | b | S | q3 |
-| q2 | a | B | a | L | B | S | q2 |
-| q2 | b | B | b | L | B | S | q2 |
-| q2 | B | B | B | R | B | S | q3 |
-| q3 | a | a | a | R | a | R | q4 |
-| q3 | b | b | b | R | b | R | q4 |
-| q3 | B | B | B | S | B | S | q_aceita |
-| q3 | a | b | a | S | b | S | q_rejeita |
-| q3 | b | a | b | S | a | S | q_rejeita |
-| q4 | a | a | a | R | a | R | q4 |
-| q4 | b | b | b | R | b | R | q4 |
-| q4 | B | B | B | S | B | S | q_aceita |
-| q4 | a | b | a | S | b | S | q_rejeita |
-| q4 | b | a | b | S | a | S | q_rejeita |
+| q0 | a | B | a | R | a | L | q1 |
+| q0 | b | B | b | R | b | L | q1 |
+| q0 | B | B | B | S | B | S | q7 |
+| q1 | a | B | a | R | a | L | q1 |
+| q1 | b | B | b | R | b | L | q1 |
+| q1 | B | B | B | S | B | R | q2 |
+| q2 | B | B | B | S | B | R | q2 |
+| q2 | B | a | B | L | a | S | q3 |
+| q2 | B | b | B | L | b | S | q3 |
+| q3 | a | a | a | L | a | S | q3 |
+| q3 | a | b | a | L | b | S | q3 |
+| q3 | b | a | b | L | a | S | q3 |
+| q3 | b | b | b | L | b | S | q3 |
+| q3 | B | a | B | R | a | S | q4 |
+| q3 | B | b | B | R | b | S | q4 |
+| q4 | a | a | a | R | a | R | q5 |
+| q4 | b | b | b | R | b | R | q6 |
+| q4 | B | B | B | S | B | S | q8 |
+| q5 | a | a | a | R | a | R | q5 |
+| q5 | b | b | b | R | b | R | q6 |
+| q5 | B | B | B | S | B | S | q8 |
+| q6 | b | b | b | R | b | R | q6 |
+| q6 | a | a | a | R | a | R | q5 |
+| q6 | B | B | B | S | B | S | q8 |
+| q7 | B | B | B | S | B | S | q_aceita |
+| q8 | B | B | B | S | B | S | q_aceita |
 
 ---
 

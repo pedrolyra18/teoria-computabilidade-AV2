@@ -3,7 +3,7 @@
 **Professor:** Daniel Leal Souza  
 **Semestre:** 01/2026  
 **Turma:** CC5MA / CC5NA  
-**Integrantes:** [Nome1], [Nome2], [Nome3], [Nome4]
+**Integrantes:** Pedro Lyra, Vithor dos Santos, Murilo Pantoja, João Felipe Soares
 
 ---
 

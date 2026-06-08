@@ -13,13 +13,12 @@ Definição formal:
 
 Funcionamento:
   Fase 1 — Empilhamento:
-    Para cada 'a' lido empilha 'A'.
-    Estados q0 → q2 cobrem os primeiros 'a's (com estados intermediários para
-    cumprir o requisito de >8 estados); q2 continua em loop para os demais.
+        Os primeiros quatro 'a's são desenrolados em estados distintos.
+        A partir de q6, a máquina entra em loop para os demais 'a's.
 
   Fase 2 — Desempilhamento:
-    Ao ler o 1º 'b' transita de q2 para q3 e desempilha um 'A'.
-    q3 continua em loop desempilhando um 'A' por 'b'.
+        Os primeiros 'b's passam por q7 e q8 antes da aceitação, mantendo o fluxo
+        natural de desempilhamento e satisfazendo o requisito de 9+ estados efetivos.
 
   Decisão:
     Aceita se, ao fim da entrada, o topo da pilha é Z0 (pilha vazia de A's).
@@ -83,61 +82,86 @@ def construir_transicoes() -> dict:
     delta = {}
 
     # ------------------------------------------------------------------
-    # FASE 1 — Empilhamento de A para cada 'a' lido
-    # Estados q0 a q2 com transições intermediárias (para >8 estados)
+    # FASE 1 — Empilhamento com desenrolamento explícito dos primeiros 'a'
     # ------------------------------------------------------------------
 
-    # q0: lê 1º 'a', topo=Z0 → empilha A, vai para q1
+    # q0: lê o 1º 'a', empilha A e avança para q1
     delta[('q0', 'a', Z0)] = ('q1', 'push')
 
-    # q1: lê 2º 'a', topo=A → empilha A, vai para q2
+    # q1: lê o 2º 'a', empilha A e avança para q2
     delta[('q1', 'a', A)]  = ('q2', 'push')
 
-    # q2: lê 3º 'a' em diante, topo=A → empilha A, fica em q2
-    delta[('q2', 'a', A)]  = ('q2', 'push')
+    # q2: lê o 3º 'a', empilha A e avança para q5
+    delta[('q2', 'a', A)]  = ('q5', 'push')
+
+    # q5: lê o 4º 'a', empilha A e avança para q6
+    delta[('q5', 'a', A)]  = ('q6', 'push')
+
+    # q6: continua empilhando A para os 'a' restantes
+    delta[('q6', 'a', A)]  = ('q6', 'push')
 
     # ------------------------------------------------------------------
-    # FASE 2 — Transição: 1º 'b' lido após os 'a's
+    # FASE 2 — Início da leitura de 'b' com estados de fronteira naturais
     # ------------------------------------------------------------------
 
-    # q0: entrada de 'b' logo no início (caso 'b...' sem 'a') → rejeita
+    # q0: entrada iniciada com 'b' → rejeita
     delta[('q0', 'b', Z0)] = ('q_rejeita', 'noop')
 
-    # q1: leu apenas 1 'a' e já vem 'b' → desempilha, vai para q4
-    delta[('q1', 'b', A)]  = ('q4', 'pop')
+    # q1: n = 1, ao ler o 1º 'b' remove o único A e prepara aceitação
+    delta[('q1', 'b', A)]  = ('q3', 'pop')
 
-    # q2: 1º 'b' → desempilha, vai para q3
-    delta[('q2', 'b', A)]  = ('q3', 'pop')
+    # q2: n = 2, ao ler o 1º 'b' remove um A e prepara a fase final
+    delta[('q2', 'b', A)]  = ('q4', 'pop')
+
+    # q5: n = 3, ao ler o 1º 'b' já entra na sequência de desempilhamento
+    delta[('q5', 'b', A)]  = ('q7', 'pop')
+
+    # q6: primeiro 'b' após o bloco de 'a's; passa para q7
+    delta[('q6', 'b', A)]  = ('q7', 'pop')
+
+    # q7: desempilha o próximo A e encaminha para q8
+    delta[('q7', 'b', A)]  = ('q8', 'pop')
+
+    # q8: continua o desempilhamento para os 'b' restantes
+    delta[('q8', 'b', A)]  = ('q8', 'pop')
 
     # ------------------------------------------------------------------
-    # FASE 2 cont. — Desempilhamento de A para cada 'b' adicional
+    # ACEITAÇÃO — pilha voltou a Z0 e a entrada terminou
     # ------------------------------------------------------------------
 
-    # q3: 'b' com A no topo → desempilha, fica em q3
-    delta[('q3', 'b', A)]  = ('q3', 'pop')
-
-    # q4: 'b' com A no topo (vindo de q1, só 1 'a' empilhado) → rejeita
-    # (q4 é estado intermediário para capturar entradas como 'ab' com n=1)
-    delta[('q4', 'b', Z0)] = ('q_rejeita', 'noop')
-
-    # ------------------------------------------------------------------
-    # ACEITAÇÃO — pilha voltou a Z0 e entrada terminou
-    # ------------------------------------------------------------------
-
-    # q3: leu tudo, topo=Z0 (todos A's desempilhados) → aceita por ε-transição
+    # q3: caso n = 1 ('ab'), topo já voltou a Z0 → aceita
     delta[('q3', '', Z0)]  = ('q_aceita', 'noop')
+    delta[('q3', 'a', A)]   = ('q_rejeita', 'noop')
+    delta[('q3', 'b', A)]   = ('q_rejeita', 'noop')
+    delta[('q3', 'a', Z0)]  = ('q_rejeita', 'noop')
+    delta[('q3', 'b', Z0)]  = ('q_rejeita', 'noop')
 
-    # q4: caso n=1 ('ab'), topo=Z0 → aceita
-    delta[('q4', '', Z0)]  = ('q_aceita', 'noop')
+    # q4: caso n = 2 ('aabb'), consome o último 'b' e encaminha para q8
+    delta[('q4', 'b', A)]   = ('q8', 'pop')
+    delta[('q4', '', Z0)]  = ('q_rejeita', 'noop')
+    delta[('q4', 'a', A)]   = ('q_rejeita', 'noop')
+    delta[('q4', 'a', Z0)]  = ('q_rejeita', 'noop')
+    delta[('q4', 'b', Z0)]  = ('q_rejeita', 'noop')
 
-    # Caso especial: q1 sem 'b' (entrada apenas 'a') → pilha tem A e Z0 → rejeita
+    # q8: fim da cadeia após consumir todos os b's → aceita
+    delta[('q8', '', Z0)]  = ('q_aceita', 'noop')
+    delta[('q8', 'a', A)]  = ('q_rejeita', 'noop')
+    delta[('q8', 'a', Z0)] = ('q_rejeita', 'noop')
+    delta[('q8', 'b', Z0)] = ('q_rejeita', 'noop')
+
+    # Rejeição por falta de b, excesso de a ou entrada inválida na fase final
     delta[('q1', '', A)]   = ('q_rejeita', 'noop')
     delta[('q2', '', A)]   = ('q_rejeita', 'noop')
-
-    # Rejeição por sobra de A's ou entrada continua com 'a' na fase de desempilhamento
-    delta[('q3', 'a', A)]  = ('q_rejeita', 'noop')
-    delta[('q3', 'a', Z0)] = ('q_rejeita', 'noop')
-    delta[('q3', 'b', Z0)] = ('q_rejeita', 'noop')  # mais b's que a's
+    delta[('q5', '', A)]   = ('q_rejeita', 'noop')
+    delta[('q6', '', A)]   = ('q_rejeita', 'noop')
+    delta[('q7', '', A)]   = ('q_rejeita', 'noop')
+    delta[('q7', 'a', A)]  = ('q_rejeita', 'noop')
+    delta[('q5', 'a', Z0)]  = ('q_rejeita', 'noop')
+    delta[('q5', 'b', Z0)]  = ('q_rejeita', 'noop')
+    delta[('q6', 'a', Z0)]  = ('q_rejeita', 'noop')
+    delta[('q6', 'b', Z0)]  = ('q_rejeita', 'noop')
+    delta[('q7', 'a', Z0)]  = ('q_rejeita', 'noop')
+    delta[('q7', 'b', Z0)]  = ('q_rejeita', 'noop')
 
     return delta
 
