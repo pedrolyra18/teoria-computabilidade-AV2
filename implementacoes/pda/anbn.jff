@@ -1,267 +1,263 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!--
-  Autômato de Pilha (PDA) — Determinístico
-  Problema: Reconhecimento de L = {a^n b^n | n >= 1}
-  AV2 — Teoria da Computabilidade — CESUPA 01/2026
-
-  Para abrir: JFLAP > File > Open > anbn.jff
-  Para testar: Input > Enter Input
-  Para rastrear: Input > Step by State
-
-  Formato das transições no JFLAP:
-    <read>  = símbolo lido da entrada (vazio = ε)
-    <pop>   = símbolo desempilhado (topo exigido)
-    <push>  = símbolo(s) empilhado(s) após pop
--->
-<structure>
-  <type>pda</type>
-  <automaton>
-
-    <!-- ESTADOS -->
-    <state id="0" name="q0" x="80"  y="200">
-      <initial/>
-    </state>
-    <state id="1" name="q1" x="240" y="200"/>
-    <state id="2" name="q2" x="400" y="200"/>
-    <state id="3" name="q3" x="560" y="200"/>
-    <state id="4" name="q4" x="560" y="340"/>
-    <state id="5" name="q5" x="720" y="200"/>
-    <state id="6" name="q6" x="720" y="340"/>
-    <state id="7" name="q7" x="880" y="200"/>
-    <state id="8" name="q8" x="880" y="340"/>
-    <state id="9" name="q_aceita" x="1040" y="200">
-      <final/>
-    </state>
-    <state id="10" name="q_rejeita" x="400" y="400"/>
-
-    <!-- =====================================================
-         FASE 1: Empilhamento
-         q0/q1/q2/q5/q6 desenrolam o prefixo de 'a's.
-         ===================================================== -->
-
-    <transition>
-      <from>0</from>
-      <to>1</to>
-      <read>a</read>
-      <pop>Z</pop>
-      <push>AZ</push>
-    </transition>
-    <transition>
-      <from>0</from>
-      <to>10</to>
-      <read>b</read>
-      <pop>Z</pop>
-      <push>Z</push>
-    </transition>
-
-    <transition>
-      <from>1</from>
-      <to>2</to>
-      <read>a</read>
-      <pop>A</pop>
-      <push>AA</push>
-    </transition>
-    <transition>
-      <from>1</from>
-      <to>3</to>
-      <read>b</read>
-      <pop>A</pop>
-      <push></push>
-    </transition>
-
-    <transition>
-      <from>2</from>
-      <to>5</to>
-      <read>a</read>
-      <pop>A</pop>
-      <push>AA</push>
-    </transition>
-    <transition>
-      <from>2</from>
-      <to>4</to>
-      <read>b</read>
-      <pop>A</pop>
-      <push></push>
-    </transition>
-
-    <transition>
-      <from>5</from>
-      <to>6</to>
-      <read>a</read>
-      <pop>A</pop>
-      <push>AA</push>
-    </transition>
-    <transition>
-      <from>5</from>
-      <to>7</to>
-      <read>b</read>
-      <pop>A</pop>
-      <push></push>
-    </transition>
-
-    <transition>
-      <from>6</from>
-      <to>6</to>
-      <read>a</read>
-      <pop>A</pop>
-      <push>AA</push>
-    </transition>
-    <transition>
-      <from>6</from>
-      <to>7</to>
-      <read>b</read>
-      <pop>A</pop>
-      <push></push>
-    </transition>
-
-    <!-- =====================================================
-         FASE 2: Desempilhamento e aceitação
-         q3 cobre n=1; q4 cobre n=2; q7/q8 cobrem n>=3.
-         ===================================================== -->
-
-    <transition>
-      <from>3</from>
-      <to>9</to>
-      <read></read>
-      <pop>Z</pop>
-      <push>Z</push>
-    </transition>
-    <transition>
-      <from>3</from>
-      <to>10</to>
-      <read>a</read>
-      <pop>A</pop>
-      <push>A</push>
-    </transition>
-    <transition>
-      <from>3</from>
-      <to>10</to>
-      <read>b</read>
-      <pop>A</pop>
-      <push>A</push>
-    </transition>
-    <transition>
-      <from>3</from>
-      <to>10</to>
-      <read>a</read>
-      <pop>Z</pop>
-      <push>Z</push>
-    </transition>
-    <transition>
-      <from>3</from>
-      <to>10</to>
-      <read>b</read>
-      <pop>Z</pop>
-      <push>Z</push>
-    </transition>
-
-    <transition>
-      <from>4</from>
-      <to>8</to>
-      <read>b</read>
-      <pop>A</pop>
-      <push></push>
-    </transition>
-    <transition>
-      <from>4</from>
-      <to>10</to>
-      <read></read>
-      <pop>Z</pop>
-      <push>Z</push>
-    </transition>
-    <transition>
-      <from>4</from>
-      <to>10</to>
-      <read>a</read>
-      <pop>A</pop>
-      <push>A</push>
-    </transition>
-    <transition>
-      <from>4</from>
-      <to>10</to>
-      <read>a</read>
-      <pop>Z</pop>
-      <push>Z</push>
-    </transition>
-    <transition>
-      <from>4</from>
-      <to>10</to>
-      <read>b</read>
-      <pop>Z</pop>
-      <push>Z</push>
-    </transition>
-
-    <transition>
-      <from>7</from>
-      <to>8</to>
-      <read>b</read>
-      <pop>A</pop>
-      <push></push>
-    </transition>
-    <transition>
-      <from>7</from>
-      <to>10</to>
-      <read>a</read>
-      <pop>A</pop>
-      <push>A</push>
-    </transition>
-    <transition>
-      <from>7</from>
-      <to>10</to>
-      <read>a</read>
-      <pop>Z</pop>
-      <push>Z</push>
-    </transition>
-    <transition>
-      <from>7</from>
-      <to>10</to>
-      <read>b</read>
-      <pop>Z</pop>
-      <push>Z</push>
-    </transition>
-    <transition>
-      <from>7</from>
-      <to>10</to>
-      <read></read>
-      <pop>A</pop>
-      <push>A</push>
-    </transition>
-
-    <transition>
-      <from>8</from>
-      <to>8</to>
-      <read>b</read>
-      <pop>A</pop>
-      <push></push>
-    </transition>
-    <transition>
-      <from>8</from>
-      <to>9</to>
-      <read></read>
-      <pop>Z</pop>
-      <push>Z</push>
-    </transition>
-    <transition>
-      <from>8</from>
-      <to>10</to>
-      <read>a</read>
-      <pop>A</pop>
-      <push>A</push>
-    </transition>
-    <transition>
-      <from>8</from>
-      <to>10</to>
-      <read>a</read>
-      <pop>Z</pop>
-      <push>Z</push>
-    </transition>
-    <transition>
-      <from>8</from>
-      <to>10</to>
-      <read>b</read>
-      <pop>Z</pop>
-      <push>Z</push>
-    </transition>
-
-  </automaton>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--Created with JFLAP 7.1.--><structure>&#13;
+	<type>pda</type>&#13;
+	<automaton>&#13;
+		<!--The list of states.-->&#13;
+		<state id="0" name="q0">&#13;
+			<x>80.0</x>&#13;
+			<y>200.0</y>&#13;
+			<initial/>&#13;
+		</state>&#13;
+		<state id="1" name="q1">&#13;
+			<x>240.0</x>&#13;
+			<y>200.0</y>&#13;
+		</state>&#13;
+		<state id="2" name="q2">&#13;
+			<x>400.0</x>&#13;
+			<y>200.0</y>&#13;
+		</state>&#13;
+		<state id="3" name="q3">&#13;
+			<x>560.0</x>&#13;
+			<y>200.0</y>&#13;
+		</state>&#13;
+		<state id="4" name="q4">&#13;
+			<x>642.0</x>&#13;
+			<y>320.0</y>&#13;
+		</state>&#13;
+		<state id="5" name="q5">&#13;
+			<x>720.0</x>&#13;
+			<y>200.0</y>&#13;
+		</state>&#13;
+		<state id="6" name="q6">&#13;
+			<x>804.0</x>&#13;
+			<y>41.0</y>&#13;
+		</state>&#13;
+		<state id="7" name="q7">&#13;
+			<x>880.0</x>&#13;
+			<y>200.0</y>&#13;
+		</state>&#13;
+		<state id="8" name="q8">&#13;
+			<x>972.0</x>&#13;
+			<y>452.0</y>&#13;
+		</state>&#13;
+		<state id="9" name="q_aceita">&#13;
+			<x>1040.0</x>&#13;
+			<y>200.0</y>&#13;
+			<final/>&#13;
+		</state>&#13;
+		<state id="10" name="q_rejeita">&#13;
+			<x>392.0</x>&#13;
+			<y>602.0</y>&#13;
+		</state>&#13;
+		<!--The list of transitions.-->&#13;
+		<transition>&#13;
+			<from>6</from>&#13;
+			<to>6</to>&#13;
+			<read>a</read>&#13;
+			<pop>A</pop>&#13;
+			<push>AA</push>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>6</from>&#13;
+			<to>7</to>&#13;
+			<read>b</read>&#13;
+			<pop>A</pop>&#13;
+			<push/>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>4</from>&#13;
+			<to>10</to>&#13;
+			<read>b</read>&#13;
+			<pop>Z</pop>&#13;
+			<push>Z</push>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>5</from>&#13;
+			<to>7</to>&#13;
+			<read>b</read>&#13;
+			<pop>A</pop>&#13;
+			<push/>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>4</from>&#13;
+			<to>10</to>&#13;
+			<read>a</read>&#13;
+			<pop>A</pop>&#13;
+			<push>A</push>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>4</from>&#13;
+			<to>10</to>&#13;
+			<read>a</read>&#13;
+			<pop>Z</pop>&#13;
+			<push>Z</push>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>7</from>&#13;
+			<to>10</to>&#13;
+			<read/>&#13;
+			<pop>A</pop>&#13;
+			<push>A</push>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>1</from>&#13;
+			<to>3</to>&#13;
+			<read>b</read>&#13;
+			<pop>A</pop>&#13;
+			<push/>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>5</from>&#13;
+			<to>6</to>&#13;
+			<read>a</read>&#13;
+			<pop>A</pop>&#13;
+			<push>AA</push>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>7</from>&#13;
+			<to>8</to>&#13;
+			<read>b</read>&#13;
+			<pop>A</pop>&#13;
+			<push/>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>2</from>&#13;
+			<to>4</to>&#13;
+			<read>b</read>&#13;
+			<pop>A</pop>&#13;
+			<push/>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>3</from>&#13;
+			<to>9</to>&#13;
+			<read/>&#13;
+			<pop>Z</pop>&#13;
+			<push>Z</push>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>8</from>&#13;
+			<to>10</to>&#13;
+			<read>a</read>&#13;
+			<pop>A</pop>&#13;
+			<push>A</push>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>8</from>&#13;
+			<to>10</to>&#13;
+			<read>a</read>&#13;
+			<pop>Z</pop>&#13;
+			<push>Z</push>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>8</from>&#13;
+			<to>10</to>&#13;
+			<read>b</read>&#13;
+			<pop>Z</pop>&#13;
+			<push>Z</push>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>8</from>&#13;
+			<to>8</to>&#13;
+			<read>b</read>&#13;
+			<pop>A</pop>&#13;
+			<push/>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>3</from>&#13;
+			<to>10</to>&#13;
+			<read>b</read>&#13;
+			<pop>A</pop>&#13;
+			<push>A</push>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>3</from>&#13;
+			<to>10</to>&#13;
+			<read>b</read>&#13;
+			<pop>Z</pop>&#13;
+			<push>Z</push>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>7</from>&#13;
+			<to>10</to>&#13;
+			<read>b</read>&#13;
+			<pop>Z</pop>&#13;
+			<push>Z</push>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>3</from>&#13;
+			<to>10</to>&#13;
+			<read>a</read>&#13;
+			<pop>A</pop>&#13;
+			<push>A</push>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>3</from>&#13;
+			<to>10</to>&#13;
+			<read>a</read>&#13;
+			<pop>Z</pop>&#13;
+			<push>Z</push>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>4</from>&#13;
+			<to>10</to>&#13;
+			<read/>&#13;
+			<pop>Z</pop>&#13;
+			<push>Z</push>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>7</from>&#13;
+			<to>10</to>&#13;
+			<read>a</read>&#13;
+			<pop>A</pop>&#13;
+			<push>A</push>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>7</from>&#13;
+			<to>10</to>&#13;
+			<read>a</read>&#13;
+			<pop>Z</pop>&#13;
+			<push>Z</push>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>8</from>&#13;
+			<to>9</to>&#13;
+			<read/>&#13;
+			<pop>Z</pop>&#13;
+			<push>Z</push>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>4</from>&#13;
+			<to>8</to>&#13;
+			<read>b</read>&#13;
+			<pop>A</pop>&#13;
+			<push/>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>1</from>&#13;
+			<to>2</to>&#13;
+			<read>a</read>&#13;
+			<pop>A</pop>&#13;
+			<push>AA</push>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>0</from>&#13;
+			<to>10</to>&#13;
+			<read>b</read>&#13;
+			<pop>Z</pop>&#13;
+			<push>Z</push>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>2</from>&#13;
+			<to>5</to>&#13;
+			<read>a</read>&#13;
+			<pop>A</pop>&#13;
+			<push>AA</push>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>0</from>&#13;
+			<to>1</to>&#13;
+			<read>a</read>&#13;
+			<pop>Z</pop>&#13;
+			<push>AZ</push>&#13;
+		</transition>&#13;
+	</automaton>&#13;
 </structure>
